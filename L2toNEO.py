@@ -11,8 +11,6 @@ from pykep.examples import add_gradient
 from common import Engine, Target, Constants, SpaceCraft
 
 
-
-
 class Sim:
     def __init__(self, solver, years, plotOn = True):
         self.uda = solver
@@ -34,9 +32,9 @@ class Sim:
             m0 = spacecraft.m0,
             Tmax = spacecraft.Tmax,
             Isp = spacecraft.Isp,
-            earth_gravity = True, 
+            earth_gravity = False, 
             sep = True, 
-            start = "l2"), 
+            start = "earth"), 
             with_grad=True)
 
     def run(self):
@@ -52,7 +50,6 @@ class Sim:
         archi = pg.archipelago(prob = self.prob)
         archi.push_back(isl)
         self.algo.set_verbosity(1)
-
         # print(get_island_count(archi))
         archi.evolve()
         # print(archi)
@@ -100,15 +97,17 @@ def get_island_count(archi):
     return count
 
 if __name__ == "__main__":
-    sim = Sim(pg.ipopt(), 3, plotOn = True)
+    sim = Sim(pg.ipopt(), 4, plotOn = True)
     ## 1032 mission
     mpcorbline = "10302   19.54  0.15 K224O 304.50803  183.39237  104.33136    4.37809  0.1363893  0.68687808   1.2721831  0 E2022-GJ2   556  11 1989-2022 0.71 M-v 3Ek MPCLINUX   0804  (10302) 1989 ML            20220414"
     mpcorbline = "K14Y00D 24.3   0.15 K1794 105.44160   34.12337  117.64264    1.73560  0.0865962  0.88781021   1.0721510  2 MPO369254   104   1  194 days 0.24 M-v 3Eh MPCALB     2803          2014 YD            20150618"
     mpcorbline = "l8784   25.60  0.15 K224Q  55.38838  289.95665  207.89998    2.10432  0.1398072  0.97449390   1.0075887  0 MPO685460   141  10 2012-2021 0.68 M-v 3Ek Pan        0803 (478784) 2012 UV136         20210603"
 
     target = Target("l8784", mpcorbline)
-    engine = Engine("Rit muX", isp = 3000, tmax = 0.0017)
-    constants = Constants("2026-06-10 23:59:54.003", "2026-07-10 23:59:54.003")
+    # engine = Engine("Rit muX", isp = 3000, tmax = 0.0017)
+    engine = Engine("Rit muX", isp = 2150, tmax = 0.0011)
+
+    constants = Constants("2023-05-20 23:59:54.003", "2023-08-25 23:59:54.003")
     spacecraft = SpaceCraft("Endeavor", 50, engine)
 
     sim.init_problem(spacecraft, target, constants)

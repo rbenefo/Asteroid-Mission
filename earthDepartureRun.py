@@ -102,7 +102,9 @@ def runEtaTest(constants, spacecraft, sim):
     plt.show()
 
 def plotISPTradeoff(constants, spacecraft, sim):
-    ispArr = np.arange(200.0,2000.0,100)
+    #Issue, this assumes a constant thrust, a useless assumption... need to model thrust relationship with ISP
+    sim.plotOn = False
+    ispArr = np.arange(200.0,2000.0, 20)
     tArr = []
     dProp = []
     for isp in ispArr:
@@ -112,23 +114,22 @@ def plotISPTradeoff(constants, spacecraft, sim):
         feasible, deltaV, ret = sim.run()
         tArr.append(ret["ToF"])
         dProp.append(ret["dPropellant"])
-        print(tArr, dProp)
-    fig,ax = plt.subplots()
+        print(len(tArr))
+        # print(tArr, dProp)
+    fig,ax = plt.subplots(2)
+    ax[0].set_title("ISP Tradeoff")
+    ax[0].plot(ispArr, dProp, color = "orange", label = "Consumed propellant")
+    ax[0].set_xlabel("ISP")
+    ax[0].set_ylabel("Propellant consumed (kg)")
+    ax2 = ax[0].twinx()
+    ax2.plot(ispArr, tArr, color = "red", label="Flight time")
+    ax2.set_ylabel("Time of flight (days)")
+    ax2.legend()
+    ax[0].legend()
 
-
-    ax.set_title("ISP Tradeoff")
-    ax.plot(ispArr, tArr, color = "red", label="Flight time")
-    ax.set_xlabel("ISP")
-    ax.set_ylabel("Time of flight (days)")
-    ax2 = ax.twinx()
-    ax2.plot(ispArr, dProp, color = "orange", label = "Consumed propellant")
-    ax2.set_ylabel("Propellant consumed (kg)")
-
-    fig2,ax3 = plt.subplots()
-    ax.set_title("ISP Tradeoff")
-    ax3.plot(tArr, dProp)
-    ax3.set_xlabel("Time of flight (days)")
-    ax3.set_ylabel("Propellant consumed (kg)")
+    ax[1].plot(tArr, dProp)
+    ax[1].set_xlabel("Time of flight (days)")
+    ax[1].set_ylabel("Propellant consumed (kg)")
     plt.show()
 
 def test(constants, spacecraft, sim):
@@ -146,11 +147,12 @@ def calcMassPercentage(spacecraft, constants, sim):
 if __name__ == "__main__":
     sim = Sim(pg.ipopt(), 3, plotOn = True)
 
-    constants = Constants("2022-09-20 23:59:54.003", "2032-09-20 23:59:54.003", dEta = 15)
+    constants = Constants("2023-05-20 23:59:54.003", "2023-06-10 23:59:54.003", dEta = 30)
     
-    engine = Engine("MR-11G", isp = 310, tmax = 1.2)
+    engine = Engine("Hydros-M", isp = 310, tmax = 1.2)
+    engine = Engine("MR-11G", isp = 219, tmax = 3.0)
 
-    spacecraft = SpaceCraft("Endeavor", 120.0, engine)
+    spacecraft = SpaceCraft("Endeavor", 87.0, engine)
 
     # plotISPTradeoff(constants, spacecraft, sim)
     test(constants, spacecraft, sim)
