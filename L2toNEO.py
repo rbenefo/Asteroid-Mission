@@ -104,10 +104,10 @@ if __name__ == "__main__":
     mpcorbline = "l8784   25.60  0.15 K224Q  55.38838  289.95665  207.89998    2.10432  0.1398072  0.97449390   1.0075887  0 MPO685460   141  10 2012-2021 0.68 M-v 3Ek Pan        0803 (478784) 2012 UV136         20210603"
 
     target = Target("l8784", mpcorbline)
-    # engine = Engine("Rit muX", isp = 3000, tmax = 0.0017)
-    engine = Engine("Rit muX", isp = 2150, tmax = 0.0011)
+    engine = Engine("Rit muX", isp = 3000, tmax = 0.0017)
+    # engine = Engine("Rit muX", isp = 2150, tmax = 0.0011)
 
-    constants = Constants("2023-05-20 23:59:54.003", "2023-08-25 23:59:54.003")
+    constants = Constants("2023-05-20 23:59:54.003", "2023-08-25 23:59:54.003", n_seg = 100)
     spacecraft = SpaceCraft("Endeavor", 50, engine)
 
     sim.init_problem(spacecraft, target, constants)

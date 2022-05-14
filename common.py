@@ -20,11 +20,11 @@ class Target:
         return "{}".format(self.name)
 
 class Constants:
-    def __init__(self, start, end, dEta = 30):
+    def __init__(self, start, end, dEta = 30, n_seg = 30):
         self.starting_time = pk.epoch_from_string(start)
         self.ending_time = pk.epoch_from_string(end)
         self.dEta = dEta
-        self.n_seg = 30
+        self.n_seg = n_seg
 
     def setdEta(self, dEta):
         self.dEta = dEta

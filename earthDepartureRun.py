@@ -82,23 +82,35 @@ class Sim:
 
 
 def runEtaTest(constants, spacecraft, sim):
+    sim.plotOn = False
     dEtaArr = np.arange(5, 95, 5)
     dVarr = []
     feasibilityArr = []
+    timeArr = []
     for i in range(len(dEtaArr)):
         print("----------")
         print("dEta:", dEtaArr[i])
         print("----------")
         constants.dEta = dEtaArr[i]
         sim.init_problem(spacecraft, None, constants)
-        feasible, deltaV = sim.run()
-        dVarr.append(deltaV)
+        feasible, deltaV, ret = sim.run()
+        dVarr.append(ret["dV"])
+        timeArr.append(ret["ToF"])
         feasibilityArr.append(feasible)
-
+    timeArr = np.array(timeArr)[feasibilityArr]
     dVarr = np.array(dVarr)[feasibilityArr]/1000
     dEtaArr = np.array(dEtaArr)[feasibilityArr]
+    fig,ax = plt.subplots(figsize = (14, 6))
 
-    plt.plot(dEtaArr, dVarr)
+    ax.plot(dEtaArr / 2, dVarr, color = "red", label = "Delta V")
+    ax.set_xlabel("Critical Eccentric Anomaly (°)")
+    ax.set_ylabel("Earth Departure Delta V (km/s)")
+    ax2 = ax.twinx()
+
+
+    ax2.set_ylabel("Earth Departure Time of Flight (days)")
+    ax2.plot(dEtaArr / 2, timeArr, color = "blue", label="Time of Flight")
+    fig.legend(loc="upper right", bbox_to_anchor=(1,1), bbox_transform=ax.transAxes)
     plt.show()
 
 def plotISPTradeoff(constants, spacecraft, sim):
@@ -149,8 +161,8 @@ if __name__ == "__main__":
 
     constants = Constants("2023-05-20 23:59:54.003", "2023-06-10 23:59:54.003", dEta = 30)
     
-    engine = Engine("Hydros-M", isp = 310, tmax = 1.2)
-    engine = Engine("MR-11G", isp = 219, tmax = 3.0)
+    # engine = Engine("Hydros-M", isp = 310, tmax = 1.2)
+    engine = Engine("MR-11G", isp = 219, tmax = 1.8)
 
     spacecraft = SpaceCraft("Endeavor", 87.0, engine)
 

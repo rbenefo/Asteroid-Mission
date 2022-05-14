@@ -83,7 +83,8 @@ class EarthDeparture:
             else:
                 rf, vf = pk.propagate_lagrangian(ri, vi, self.dt, self.__earth.mu_self)
                 if stopThrusting:
-                    if np.abs(norm(vf) - norm(vi))  < 0.3:
+                    if norm(rf) >= 0.929e9: #earth SOI
+                    # if np.abs(norm(vf) - norm(vi))  < 0.3:
                         break
 
             xp.append(rf[0]); yp.append(rf[1]); zp.append(rf[2])
